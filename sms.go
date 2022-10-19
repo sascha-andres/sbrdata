@@ -2,16 +2,29 @@ package sbrdata
 
 import "encoding/xml"
 
-// Smses reflects the backup data from SMS Backup and Restore (Pro)
-type Smses struct {
-	XMLName    xml.Name `xml:"smses"`
-	Text       string   `xml:",chardata"`
-	Count      string   `xml:"count,attr"`
-	BackupSet  string   `xml:"backup_set,attr"`
-	BackupDate string   `xml:"backup_date,attr"`
-	Type       string   `xml:"type,attr"`
-	Sms        []struct {
-		Text          string `xml:",chardata"`
+type (
+	// Part is on part
+	Part struct {
+		Seq      string `xml:"seq,attr"`
+		Ct       string `xml:"ct,attr"`
+		Name     string `xml:"name,attr"`
+		Chset    string `xml:"chset,attr"`
+		Cd       string `xml:"cd,attr"`
+		Fn       string `xml:"fn,attr"`
+		Cid      string `xml:"cid,attr"`
+		Cl       string `xml:"cl,attr"`
+		CttS     string `xml:"ctt_s,attr"`
+		CttT     string `xml:"ctt_t,attr"`
+		AttrText string `xml:"text,attr"`
+	}
+
+	// Parts lists the parts of which the MMS is composed
+	Parts struct {
+		Part []Part `xml:"part"`
+	}
+
+	// SMS represents a simple short message
+	SMS struct {
 		Protocol      string `xml:"protocol,attr"`
 		Address       string `xml:"address,attr"`
 		Date          string `xml:"date,attr"`
@@ -28,9 +41,24 @@ type Smses struct {
 		SubID         string `xml:"sub_id,attr"`
 		ReadableDate  string `xml:"readable_date,attr"`
 		ContactName   string `xml:"contact_name,attr"`
-	} `xml:"sms"`
-	Mms []struct {
-		Text          string `xml:",chardata"`
+	}
+
+	// Addr is one address
+	Addr struct {
+		Text    string `xml:",chardata"`
+		Address string `xml:"address,attr"`
+		Type    string `xml:"type,attr"`
+		Charset string `xml:"charset,attr"`
+	}
+
+	// Addrs is an address list
+	Addrs struct {
+		Text string `xml:",chardata"`
+		Addr []Addr `xml:"addr"`
+	}
+
+	// MMS is a multi media message
+	MMS struct {
 		Date          string `xml:"date,attr"`
 		Snippet       string `xml:"snippet,attr"`
 		BlockType     string `xml:"block_type,attr"`
@@ -91,31 +119,19 @@ type Smses struct {
 		PreviewData   string `xml:"preview_data,attr"`
 		ReadableDate  string `xml:"readable_date,attr"`
 		ContactName   string `xml:"contact_name,attr"`
-		Parts         struct {
-			Text string `xml:",chardata"`
-			Part []struct {
-				Text     string `xml:",chardata"`
-				Seq      string `xml:"seq,attr"`
-				Ct       string `xml:"ct,attr"`
-				Name     string `xml:"name,attr"`
-				Chset    string `xml:"chset,attr"`
-				Cd       string `xml:"cd,attr"`
-				Fn       string `xml:"fn,attr"`
-				Cid      string `xml:"cid,attr"`
-				Cl       string `xml:"cl,attr"`
-				CttS     string `xml:"ctt_s,attr"`
-				CttT     string `xml:"ctt_t,attr"`
-				AttrText string `xml:"text,attr"`
-			} `xml:"part"`
-		} `xml:"parts"`
-		Addrs struct {
-			Text string `xml:",chardata"`
-			Addr []struct {
-				Text    string `xml:",chardata"`
-				Address string `xml:"address,attr"`
-				Type    string `xml:"type,attr"`
-				Charset string `xml:"charset,attr"`
-			} `xml:"addr"`
-		} `xml:"addrs"`
-	} `xml:"mms"`
-}
+		Parts         Parts  `xml:"parts"`
+		Addrs         Addrs  `xml:"addrs"`
+	}
+
+	// Messages reflects the backup data from SMS Backup and Restore (Pro)
+	Messages struct {
+		XMLName    xml.Name `xml:"smses"`
+		Text       string   `xml:",chardata"`
+		Count      string   `xml:"count,attr"`
+		BackupSet  string   `xml:"backup_set,attr"`
+		BackupDate string   `xml:"backup_date,attr"`
+		Type       string   `xml:"type,attr"`
+		Sms        []SMS    `xml:"sms"`
+		Mms        []MMS    `xml:"mms"`
+	}
+)
