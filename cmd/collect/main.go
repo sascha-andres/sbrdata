@@ -89,7 +89,7 @@ func run() error {
 			return err
 		}
 	} else {
-		log.Printf("no message file or error: %s", err)
+		log.Printf("no call file or error: %s", err)
 	}
 	if data, err := json.Marshal(coll); err == nil {
 		return os.WriteFile(collectionFile, data, 0600)
