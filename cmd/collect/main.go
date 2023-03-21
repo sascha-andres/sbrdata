@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"io/fs"
@@ -14,6 +13,7 @@ import (
 
 var (
 	collectionFile, callFile, messageFile string
+	backup, verbose                       bool
 )
 
 func main() {
@@ -24,6 +24,8 @@ func main() {
 	flag.StringVar(&collectionFile, "collection-file", "", "pass name/path of collection file")
 	flag.StringVarWithoutEnv(&callFile, "call-file", "", "pass name/path of call file")
 	flag.StringVarWithoutEnv(&messageFile, "message-file", "", "pass name/path of message file")
+	flag.BoolVarWithoutEnv(&verbose, "verbose", false, "print more information")
+	flag.BoolVar(&backup, "backup", false, "do a backup of the file")
 	flag.Parse()
 
 	err := run()
@@ -54,6 +56,12 @@ func run() error {
 	}
 	if err != nil {
 		return err
+	}
+	if verbose {
+		coll.SetVerbose()
+	}
+	if backup {
+		coll.SetBackup()
 	}
 	if _, err = os.Stat(messageFile); err == nil {
 		log.Printf("using %q as message file", messageFile)
@@ -91,9 +99,5 @@ func run() error {
 	} else {
 		log.Printf("no call file or error: %s", err)
 	}
-	if data, err := json.Marshal(coll); err == nil {
-		return os.WriteFile(collectionFile, data, 0600)
-	} else {
-		return err
-	}
+	return coll.Save(collectionFile)
 }
