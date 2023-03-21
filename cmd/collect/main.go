@@ -22,8 +22,8 @@ func main() {
 
 	flag.SetEnvPrefix("SBR_COLLECTION")
 	flag.StringVar(&collectionFile, "collection-file", "", "pass name/path of collection file")
-	flag.StringVar(&callFile, "call-file", "calls.xml", "pass name/path of call file")
-	flag.StringVar(&messageFile, "message-file", "sms.xml", "pass name/path of message file")
+	flag.StringVarWithoutEnv(&callFile, "call-file", "", "pass name/path of call file")
+	flag.StringVarWithoutEnv(&messageFile, "message-file", "", "pass name/path of message file")
 	flag.Parse()
 
 	err := run()
