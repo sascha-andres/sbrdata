@@ -2,6 +2,31 @@ package sbrdata
 
 import "encoding/xml"
 
+type (
+	// CallsData allows retrieval of data for all calls
+	CallsData interface {
+		GetCount() string
+		GetBackupSet() string
+		GetBackupDate() string
+		GetType() string
+		GetCalls() []Call
+	}
+
+	// CallData is a single call
+	CallData interface {
+		GetNumber() string
+		GetDuration() string
+		GetDate() string
+		GetType() string
+		GetPresentation() string
+		GetSubscriptionID() string
+		GetPostDialDigits() string
+		GetSubscriptionComponentName() string
+		GetReadableDate() string
+		GetContactName() string
+	}
+)
+
 // Call is a single call
 type Call struct {
 	Number                    string `xml:"number,attr"`
@@ -16,6 +41,46 @@ type Call struct {
 	ContactName               string `xml:"contact_name,attr"`
 }
 
+func (c Call) GetNumber() string {
+	return c.Number
+}
+
+func (c Call) GetDuration() string {
+	return c.Duration
+}
+
+func (c Call) GetDate() string {
+	return c.Date
+}
+
+func (c Call) GetType() string {
+	return c.Type
+}
+
+func (c Call) GetPresentation() string {
+	return c.Presentation
+}
+
+func (c Call) GetSubscriptionID() string {
+	return c.SubscriptionID
+}
+
+func (c Call) GetPostDialDigits() string {
+	return c.GetPostDialDigits()
+}
+
+func (c Call) GetSubscriptionComponentName() string {
+	return c.SubscriptionComponentName
+}
+
+func (c Call) GetReadableDate() string {
+	return c.ReadableDate
+}
+
+func (c Call) GetContactName() string {
+	return c.ContactName
+}
+
 // Calls contains all
 type Calls struct {
 	XMLName    xml.Name `xml:"calls"`
@@ -24,4 +89,27 @@ type Calls struct {
 	BackupDate string   `xml:"backup_date,attr"`
 	Type       string   `xml:"type,attr"`
 	Call       []Call   `xml:"call"`
+}
+
+func (c Calls) GetCount() string {
+	return c.Count
+}
+
+func (c Calls) GetBackupSet() string {
+	return c.BackupSet
+}
+
+func (c Calls) GetBackupDate() string {
+	return c.BackupDate
+}
+
+func (c Calls) GetType() string {
+	return c.Type
+}
+
+func (c Calls) GetCalls() []Call {
+	if c.Call == nil {
+		return make([]Call, 0, 0)
+	}
+	return c.Call
 }
