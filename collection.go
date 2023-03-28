@@ -72,11 +72,11 @@ func (c *Collection) doBackup(path string) error {
 }
 
 // AddCalls will add all calls to collection which are not yet known
-func (c *Collection) AddCalls(calls Calls) error {
-	for _, call := range calls.Call {
+func (c *Collection) AddCalls(calls CallsData) error {
+	for _, call := range calls.GetCalls() {
 		if !c.isKnownCall(call) {
 			if c.verbose {
-				log.Printf("adding call with %q on %q", call.ContactName, call.Date)
+				log.Printf("adding call with %q on %q", call.GetContactName(), call.GetDate())
 			}
 			c.Calls = append(c.Calls, call)
 		}
@@ -90,19 +90,19 @@ func (c *Collection) isKnownCall(call Call) bool {
 }
 
 // AddMessages will add SMS/MMS to collection which are not yet known
-func (c *Collection) AddMessages(messages Messages) error {
-	for _, s := range messages.Sms {
+func (c *Collection) AddMessages(messages MessageData) error {
+	for _, s := range messages.GetSms() {
 		if !c.isKnownSMS(s) {
 			if c.verbose {
-				log.Printf("adding sms with %q on %q", s.ContactName, s.Date)
+				log.Printf("adding sms with %q on %q", s.GetContactName(), s.GetDate())
 			}
 			c.SMS = append(c.SMS, s)
 		}
 	}
-	for _, s := range messages.Mms {
+	for _, s := range messages.GetMms() {
 		if !c.isKnownMMS(s) {
 			if c.verbose {
-				log.Printf("adding sms mms %q on %q", s.ContactName, s.Date)
+				log.Printf("adding sms mms %q on %q", s.GetContactName(), s.GetDate())
 			}
 			c.MMS = append(c.MMS, s)
 		}
@@ -116,9 +116,9 @@ func (c *Collection) isKnownSMS(sms SMS) bool {
 }
 
 // isKnownMMS scans collection for MMS and returns true if found
-func (c *Collection) isKnownMMS(m MMS) bool {
+func (c *Collection) isKnownMMS(m MMSData) bool {
 	for _, s := range c.MMS {
-		if s.Date == m.Date && s.Address == m.Address {
+		if s.Date == m.GetDate() && s.Address == m.GetAddress() {
 			return true
 		}
 	}
