@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/sascha-andres/reuse/functional"
+
 	"golang.org/x/exp/slices"
 )
 
@@ -35,6 +37,65 @@ func LoadCollection(path string) (*Collection, error) {
 	var coll Collection
 	err = json.Unmarshal(data, &coll)
 	return &coll, err
+}
+
+// KeyFuncs is a container for all key functions
+type KeyFuncs struct {
+	Call functional.KeyFunc[Call, string]
+	SMS  functional.KeyFunc[SMS, string]
+	MMS  functional.KeyFunc[MMS, string]
+}
+
+// LoadGroupedCollection loads a collection of communication data from a file and groups it
+func LoadGroupedCollection(path string, key KeyFuncs) (map[string]*Collection, error) {
+	coll, err := LoadCollection(path)
+	if err != nil {
+		return nil, err
+	}
+	result := make(map[string]*Collection)
+	for _, call := range coll.Calls {
+		key, err := key.Call(call)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := result[key]; !ok {
+			result[key] = &Collection{
+				Calls: make([]Call, 0),
+				SMS:   make([]SMS, 0),
+				MMS:   make([]MMS, 0),
+			}
+		}
+		result[key].Calls = append(result[key].Calls, call)
+	}
+	for _, sms := range coll.SMS {
+		key, err := key.SMS(sms)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := result[key]; !ok {
+			result[key] = &Collection{
+				Calls: make([]Call, 0),
+				SMS:   make([]SMS, 0),
+				MMS:   make([]MMS, 0),
+			}
+		}
+		result[key].SMS = append(result[key].SMS, sms)
+	}
+	for _, mms := range coll.MMS {
+		key, err := key.MMS(mms)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := result[key]; !ok {
+			result[key] = &Collection{
+				Calls: make([]Call, 0),
+				SMS:   make([]SMS, 0),
+				MMS:   make([]MMS, 0),
+			}
+		}
+		result[key].MMS = append(result[key].MMS, mms)
+	}
+	return result, nil
 }
 
 // Save will store all data in the collection

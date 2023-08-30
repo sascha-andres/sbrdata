@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/sascha-andres/flag"
+	"github.com/sascha-andres/reuse/flag"
 	"github.com/sascha-andres/sbrdata"
 )
 
