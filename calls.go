@@ -1,6 +1,9 @@
 package sbrdata
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"fmt"
+)
 
 type (
 	// CallsData allows retrieval of data for all calls
@@ -39,6 +42,10 @@ type Call struct {
 	SubscriptionComponentName string `xml:"subscription_component_name,attr"`
 	ReadableDate              string `xml:"readable_date,attr"`
 	ContactName               string `xml:"contact_name,attr"`
+}
+
+func (c Call) String() string {
+	return fmt.Sprintf("%s: %s", c.ContactName, c.Number)
 }
 
 func (c Call) GetNumber() string {
