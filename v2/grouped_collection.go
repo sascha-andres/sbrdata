@@ -189,6 +189,49 @@ func (gc *GroupedCollection) Keys() []string {
 	return keys
 }
 
+// AllCalls returns all the calls from the GroupedCollection by iterating
+// over the keys and appending calls from each collection to the result slice.
+// It returns the result slice of calls and any error encountered during the process.
+func (gc *GroupedCollection) AllCalls() ([]Call, error) {
+	var result []Call
+	for _, key := range gc.Keys() {
+		data, err := gc.getCollection(key)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, data.Calls...)
+	}
+	return result, nil
+}
+
+// AllMms returns all MMS messages in the GroupedCollection
+func (gc *GroupedCollection) AllMms() ([]MMS, error) {
+	var result []MMS
+	for _, key := range gc.Keys() {
+		data, err := gc.getCollection(key)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, data.Mms...)
+	}
+	return result, nil
+}
+
+// AllSms returns all SMS messages from the GroupedCollection
+// by iterating over the collection's keys and retrieving the SMS messages.
+// It returns a slice of SMS messages and an error in case of any failure.
+func (gc *GroupedCollection) AllSms() ([]SMS, error) {
+	var result []SMS
+	for _, key := range gc.Keys() {
+		data, err := gc.getCollection(key)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, data.Sms...)
+	}
+	return result, nil
+}
+
 // CustomGrouped groups the calls, SMS, and MMS based on the provided key functions and returns a map with the grouped collections.
 // Beware: expensive as it iterates over all keys anr returns all data in a map of keys
 func (gc *GroupedCollection) CustomGrouped(key KeyFuncs) (map[string]*Collection, error) {
