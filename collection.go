@@ -150,7 +150,7 @@ func (c *Collection) isKnownCall(call Call) bool {
 	return slices.Contains(c.Calls, call)
 }
 
-// AddMessages will add SMS/MMS to collection which are not yet known
+// AddMessages will add SMS/Mms to collection which are not yet known
 func (c *Collection) AddMessages(messages MessageData) error {
 	for _, s := range messages.GetSms() {
 		if !c.isKnownSMS(s) {

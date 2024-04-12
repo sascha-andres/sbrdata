@@ -189,6 +189,76 @@ func (gc *GroupedCollection) Keys() []string {
 	return keys
 }
 
+// CustomGrouped groups the calls, SMS, and MMS based on the provided key functions and returns a map with the grouped collections.
+// Beware: expensive as it iterates over all keys anr returns all data in a map of keys
+func (gc *GroupedCollection) CustomGrouped(key KeyFuncs) (map[string]*Collection, error) {
+	coll := &Collection{
+		Calls: make([]Call, 0),
+		Sms:   make([]SMS, 0),
+		Mms:   make([]MMS, 0),
+	}
+
+	for k, v := range gc.collections {
+		err := coll.AddSms(v.Sms...)
+		if err != nil {
+			return nil, fmt.Errorf("error appending Sms for key %q: %w", k, err)
+		}
+		err = coll.AddMms(v.Mms...)
+		if err != nil {
+			return nil, fmt.Errorf("error appending Mms for key %q: %w", k, err)
+		}
+		err = coll.addCalls(v.Calls...)
+		if err != nil {
+			return nil, fmt.Errorf("error appending calls for key %q: %w", k, err)
+		}
+	}
+
+	result := make(map[string]*Collection)
+	for _, call := range coll.Calls {
+		key, err := key.Call(call)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := result[key]; !ok {
+			result[key] = &Collection{
+				Calls: make([]Call, 0),
+				Sms:   make([]SMS, 0),
+				Mms:   make([]MMS, 0),
+			}
+		}
+		result[key].Calls = append(result[key].Calls, call)
+	}
+	for _, sms := range coll.Sms {
+		key, err := key.SMS(sms)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := result[key]; !ok {
+			result[key] = &Collection{
+				Calls: make([]Call, 0),
+				Sms:   make([]SMS, 0),
+				Mms:   make([]MMS, 0),
+			}
+		}
+		result[key].Sms = append(result[key].Sms, sms)
+	}
+	for _, mms := range coll.Mms {
+		key, err := key.MMS(mms)
+		if err != nil {
+			return nil, err
+		}
+		if _, ok := result[key]; !ok {
+			result[key] = &Collection{
+				Calls: make([]Call, 0),
+				Sms:   make([]SMS, 0),
+				Mms:   make([]MMS, 0),
+			}
+		}
+		result[key].Mms = append(result[key].Mms, mms)
+	}
+	return result, nil
+}
+
 // Get retrieves a specific collection based on the provided key.
 // If the groupPeriod is NoGrouping, the key must be empty. It returns an error
 // if a key is provided.
@@ -228,8 +298,8 @@ func (gc *GroupedCollection) Get(key string) (*Collection, error) {
 		c := &Collection{
 			Key:     key,
 			Calls:   make([]Call, 0),
-			SMS:     make([]SMS, 0),
-			MMS:     make([]MMS, 0),
+			Sms:     make([]SMS, 0),
+			Mms:     make([]MMS, 0),
 			verbose: gc.verbose,
 			backup:  gc.backup,
 		}

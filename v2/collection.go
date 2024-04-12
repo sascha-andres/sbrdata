@@ -20,10 +20,10 @@ type Collection struct {
 	Key string
 	// Calls
 	Calls []Call
-	// SMS data
-	SMS []SMS
-	// MMS data
-	MMS []MMS
+	// Sms data
+	Sms []SMS
+	// Mms data
+	Mms []MMS
 	// verbose controls verbosity
 	verbose bool
 	// backup controls whether a backup file is created
@@ -63,13 +63,13 @@ func LoadGroupedCollection(path string, key KeyFuncs) (map[string]*Collection, e
 		if _, ok := result[key]; !ok {
 			result[key] = &Collection{
 				Calls: make([]Call, 0),
-				SMS:   make([]SMS, 0),
-				MMS:   make([]MMS, 0),
+				Sms:   make([]SMS, 0),
+				Mms:   make([]MMS, 0),
 			}
 		}
 		result[key].Calls = append(result[key].Calls, call)
 	}
-	for _, sms := range coll.SMS {
+	for _, sms := range coll.Sms {
 		key, err := key.SMS(sms)
 		if err != nil {
 			return nil, err
@@ -77,13 +77,13 @@ func LoadGroupedCollection(path string, key KeyFuncs) (map[string]*Collection, e
 		if _, ok := result[key]; !ok {
 			result[key] = &Collection{
 				Calls: make([]Call, 0),
-				SMS:   make([]SMS, 0),
-				MMS:   make([]MMS, 0),
+				Sms:   make([]SMS, 0),
+				Mms:   make([]MMS, 0),
 			}
 		}
-		result[key].SMS = append(result[key].SMS, sms)
+		result[key].Sms = append(result[key].Sms, sms)
 	}
-	for _, mms := range coll.MMS {
+	for _, mms := range coll.Mms {
 		key, err := key.MMS(mms)
 		if err != nil {
 			return nil, err
@@ -91,11 +91,11 @@ func LoadGroupedCollection(path string, key KeyFuncs) (map[string]*Collection, e
 		if _, ok := result[key]; !ok {
 			result[key] = &Collection{
 				Calls: make([]Call, 0),
-				SMS:   make([]SMS, 0),
-				MMS:   make([]MMS, 0),
+				Sms:   make([]SMS, 0),
+				Mms:   make([]MMS, 0),
 			}
 		}
-		result[key].MMS = append(result[key].MMS, mms)
+		result[key].Mms = append(result[key].Mms, mms)
 	}
 	return result, nil
 }
@@ -178,7 +178,7 @@ func (c *Collection) AddSms(messages ...SMS) error {
 			if c.verbose {
 				log.Printf("adding sms mms %q on %q", s.GetContactName(), s.GetDate())
 			}
-			c.SMS = append(c.SMS, s)
+			c.Sms = append(c.Sms, s)
 		}
 	}
 	return nil
@@ -192,7 +192,7 @@ func (c *Collection) AddMms(messages ...MMS) error {
 			if c.verbose {
 				log.Printf("adding sms mms %q on %q", s.GetContactName(), s.GetDate())
 			}
-			c.MMS = append(c.MMS, s)
+			c.Mms = append(c.Mms, s)
 		}
 	}
 	return nil
@@ -200,12 +200,12 @@ func (c *Collection) AddMms(messages ...MMS) error {
 
 // isKnownSMS scans collection for SMS and returns true if found
 func (c *Collection) isKnownSMS(sms SMS) bool {
-	return slices.Contains(c.SMS, sms)
+	return slices.Contains(c.Sms, sms)
 }
 
 // isKnownMMS scans collection for MMS and returns true if found
 func (c *Collection) isKnownMMS(m MMSData) bool {
-	for _, s := range c.MMS {
+	for _, s := range c.Mms {
 		if s.Date == m.GetDate() && s.Address == m.GetAddress() {
 			return true
 		}
