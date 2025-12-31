@@ -1,8 +1,8 @@
 module github.com/sascha-andres/sbrdata/v2
 
-go 1.22
+go 1.24.0
 
 require (
-	github.com/sascha-andres/reuse v0.6.2
-	golang.org/x/exp v0.0.0-20240404231335-c0f41cb1a7a0
+	github.com/sascha-andres/reuse v0.11.0
+	golang.org/x/exp v0.0.0-20251219203646-944ab1f22d93
 )
