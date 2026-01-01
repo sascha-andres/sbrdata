@@ -44,6 +44,16 @@ type Call struct {
 	ContactName               string `xml:"contact_name,attr"`
 }
 
+func (c Call) GetDataFrom() string {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (c Call) GetServiceType() string {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (c Call) String() string {
 	return fmt.Sprintf("%s: %s", c.ContactName, c.Number)
 }
