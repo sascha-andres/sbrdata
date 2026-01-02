@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/sascha-andres/reuse"
 	"github.com/sascha-andres/reuse/functional"
 
 	"golang.org/x/exp/slices"
@@ -106,7 +107,7 @@ func (c *Collection) Save(path string) error {
 	if err != nil {
 		return err
 	}
-	if c.backup {
+	if c.backup && reuse.FileExists(path) {
 		err = c.doBackup(path)
 		if err != nil {
 			return err

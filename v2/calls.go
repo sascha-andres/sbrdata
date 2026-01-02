@@ -29,29 +29,23 @@ type (
 		GetContactName() string
 		GetServiceType() string
 		GetDataFrom() string
-		GetTags() []string
 	}
 )
 
 // Call is a single call
 type Call struct {
-	Number                    string   `xml:"number,attr"`
-	Duration                  string   `xml:"duration,attr"`
-	Date                      string   `xml:"date,attr"`
-	Type                      string   `xml:"type,attr"`
-	Presentation              string   `xml:"presentation,attr"`
-	SubscriptionID            string   `xml:"subscription_id,attr"`
-	PostDialDigits            string   `xml:"post_dial_digits,attr"`
-	SubscriptionComponentName string   `xml:"subscription_component_name,attr"`
-	ReadableDate              string   `xml:"readable_date,attr"`
-	ContactName               string   `xml:"contact_name,attr"`
-	ServiceType               *string  `xml:"service_type,attr"`
-	DataFrom                  *string  `xml:"data_from,attr"`
-	Tags                      []string `xml:"tags,attr"`
-}
-
-func (c Call) GetTags() []string {
-	return c.Tags
+	Number                    string  `xml:"number,attr"`
+	Duration                  string  `xml:"duration,attr"`
+	Date                      string  `xml:"date,attr"`
+	Type                      string  `xml:"type,attr"`
+	Presentation              string  `xml:"presentation,attr"`
+	SubscriptionID            string  `xml:"subscription_id,attr"`
+	PostDialDigits            string  `xml:"post_dial_digits,attr"`
+	SubscriptionComponentName string  `xml:"subscription_component_name,attr"`
+	ReadableDate              string  `xml:"readable_date,attr"`
+	ContactName               string  `xml:"contact_name,attr"`
+	ServiceType               *string `xml:"service_type,attr"`
+	DataFrom                  *string `xml:"data_from,attr"`
 }
 
 func (c Call) GetDataFrom() string {
