@@ -1,6 +1,7 @@
 package sbrdata
 
 import (
+	"cmp"
 	"encoding/xml"
 	"fmt"
 )
@@ -46,6 +47,10 @@ type Call struct {
 	ContactName               string  `xml:"contact_name,attr"`
 	ServiceType               *string `xml:"service_type,attr"`
 	DataFrom                  *string `xml:"data_from,attr"`
+}
+
+func (c Call) Cmp(c2 Call) int {
+	return cmp.Compare(c.Date, c2.Date)
 }
 
 func (c Call) GetDataFrom() string {
